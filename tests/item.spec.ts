@@ -1,0 +1,37 @@
+import { test, Page } from '@playwright/test';
+import { ItemPage } from '../pages/ItemPage';
+import { NavComponent } from '../pages/NavComponent';
+import { LoginPage } from '../pages/LoginPage';
+import * as envData from '../env-config.json';
+
+// Define environment configuration
+const env = (process.env.TEST_ENV || 'beta') as keyof typeof envData;
+const config = envData[env];
+
+export const runItemTests = async (page: Page) => {
+    const itemPage = new ItemPage(page);
+    const nav = new NavComponent(page);
+
+    await test.step('Navigate to Item Screen', async () => {
+        await nav.goToItem();
+        // Wait for the URL to change to ensure we are on the list page
+        await page.waitForURL(/.*products/, { waitUntil: 'networkidle', timeout: 15000 });
+    });
+
+    await test.step('Validate Item Title', async () => {
+        await itemPage.itemPageTitle.waitFor({ state: 'visible' });
+        await itemPage.verifyBreadCrumbAndTitle();
+    });
+
+    await test.step('Navigate to Add Item Form', async () => {
+        await itemPage.addItemBtn.waitFor({ state: 'visible' });
+        await page.waitForTimeout(500); 
+        await itemPage.clickAddItem();
+        await page.waitForURL(/.*info/, { waitUntil: 'load', timeout: 20000 });
+    });
+
+    await test.step('Create New Item', async () => {
+        await itemPage.itemIdField.waitFor({ state: 'visible' });
+        await itemPage.fillItemId("1234","10","20","TestItem00z");
+    });
+};
