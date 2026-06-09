@@ -1,4 +1,4 @@
-import { test, Page } from '@playwright/test';
+import {  Page } from '@playwright/test';
 import { ItemPage } from '../pages/ItemPage';
 import { NavComponent } from '../pages/NavComponent';
 import { LoginPage } from '../pages/LoginPage';
@@ -8,9 +8,12 @@ import * as envData from '../env-config.json';
 const env = (process.env.TEST_ENV || 'beta') as keyof typeof envData;
 const config = envData[env];
 
-export const runItemTests = async (page: Page) => {
+export const runItemTests = async (page: Page, test: any) => {
     const itemPage = new ItemPage(page);
     const nav = new NavComponent(page);
+
+    // Generate the unique ID here
+    const dynamicId = `AUTOTEST_${Date.now()}`;
 
     await test.step('Navigate to Item Screen', async () => {
         await nav.goToItem();
@@ -32,6 +35,18 @@ export const runItemTests = async (page: Page) => {
 
     await test.step('Create New Item', async () => {
         await itemPage.itemIdField.waitFor({ state: 'visible' });
-        await itemPage.fillItemId("1234","10","20","TestItem00z");
+        await itemPage.fillItemDetails(dynamicId,"10","20",`Test_Item_${dynamicId}`);
     });
+   await test.step('Verify Item in Grid', async () => {
+    if (!page.url().includes('products')) {
+        await page.getByRole('link', { name: 'Items' }).click();
+        // Wait for the URL to settle before interacting with the search box
+        await page.waitForURL(/.*products/);
+    }
+    
+    // Give the grid a second to initialize its internal state
+    await page.waitForTimeout(1000); 
+    
+    await itemPage.searchAndVerifyItem(dynamicId);
+});
 };

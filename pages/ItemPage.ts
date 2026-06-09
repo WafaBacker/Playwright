@@ -10,6 +10,8 @@ export class ItemPage {
     readonly saveBtn! : Locator;
     readonly continueBtn!: Locator;
     readonly successMessage!: Locator;
+    readonly searchInput!: Locator;
+    //readonly firstRowCell!: Locator;
 
     constructor(public page: Page) {
         this.itemPageTitle = page.locator("//h2[@class='heading-card']");
@@ -21,6 +23,7 @@ export class ItemPage {
         this.saveBtn = page.locator("//button[normalize-space()='Save']");
         this.continueBtn = page.getByRole('button', { name: 'Continue', exact: true });
         this.successMessage = page.locator('.swal2-success, .toast-success, text=/successfully/i').first();
+        this.searchInput = page.getByPlaceholder('Item Name, UPC, Item ID or Product ID');
     }
 
     async verifyBreadCrumbAndTitle() {
@@ -43,7 +46,7 @@ export class ItemPage {
         }
     }
 
-    async fillItemId(id: string, cost: string, selling: string, name: string ) {
+    async fillItemDetails(id: string, cost: string, selling: string, name: string ) {
         await this.itemIdField.fill(id);
         await this.itemCostPrice.fill(cost);
         await this.itemSellingPrice.fill(selling);
@@ -56,6 +59,7 @@ export class ItemPage {
         await this.page.waitForTimeout(500);
         await continueBtn.click({ force: true });
         
+
         // 1. Wait for the confirmation modal to be completely gone
         await this.page.locator('.swal2-container').waitFor({ state: 'hidden' });
 
@@ -65,9 +69,20 @@ export class ItemPage {
                   .first()
                   .waitFor({ state: 'visible', timeout: 10000 });
                   
-        console.log("Save verified! Now safe to navigate to Customers.");
     } catch (e) {
         console.log("Modal didn't appear or Save failed to show success message.");
     }
     }
+
+async searchAndVerifyItem(id: string) {
+        console.log(`Searching for Item ID: ${id}`);
+        // 1. Enter the ID into the search box
+        await this.searchInput.fill(id);
+        await this.page.keyboard.press('Enter');
+
+    }
+
 }
+
+
+

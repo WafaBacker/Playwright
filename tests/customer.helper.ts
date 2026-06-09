@@ -1,8 +1,8 @@
-import { test, Page } from '@playwright/test';
+import {  Page } from '@playwright/test';
 import { CustomerPage } from '../pages/CustomerPage';
 import { NavComponent } from '../pages/NavComponent';
 
-export const runCustomerTests = async (page: Page) => {
+export const runCustomerTests = async (page: Page, test:any) => {
     const customerPage = new CustomerPage(page);
     const nav = new NavComponent(page);
 

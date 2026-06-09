@@ -12,7 +12,7 @@ export class NavComponent {
   constructor(public page: Page) {
     this.sideBarLink = page.locator("//*[@class='router-sidebar router-sidebar-default show-closed-router-sidebar']"); //the side bar
     this.catalogIcon = page.locator("div").filter({ hasText: /^Catalog$/ }).first();
-    this.itemIcon = page.getByText('Items', { exact: true });
+    this.itemIcon = page.getByText('Items', { exact: true }).first();
     this.CrmIcon = page.locator('div').filter({ hasText: /^CRM$/ }).first()
     this.customerIcon = page.getByText('Customers');
   }
@@ -26,7 +26,7 @@ export class NavComponent {
   async goToItem() {
     await this.goToSideBar()
     await this.catalogIcon.click(); //Click 'Catalog Icon' in side bar
-    await this.itemIcon.click(); //Click 'Items' option under catalog
+    await this.itemIcon.first().click(); //Click 'Items' option under catalog
   }
 
 

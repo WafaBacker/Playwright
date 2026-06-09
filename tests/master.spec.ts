@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
-import { runItemTests } from './item.spec';
-import { runCustomerTests } from './customer.spec';
+import { runItemTests } from './item.helper';
+import { runCustomerTests } from './customer.helper';
 import * as envData from '../env-config.json';
 
 const env = (process.env.TEST_ENV || 'beta') as keyof typeof envData;
@@ -13,15 +13,15 @@ test('Full Business Journey', async ({ page }) => {
     await test.step('Login to Portal', async () => {
         await page.goto(`${config.baseUrl}/rc-console/console/login`);
         await loginPage.login(config.user, config.pass, config.domain);
-        await page.waitForURL(/.*analytics/, { waitUntil: 'networkidle' });
+        await page.waitForURL(/.*analytics/, { waitUntil: 'load', timeout: 45000 });
     });
 
     // Executes Item steps in the SAME browser window
-    await runItemTests(page);
+    await runItemTests(page, test);
 
     // Buffer for UI stability
     await page.waitForTimeout(3000);
 
     // Executes Customer steps in the SAME browser window
-    await runCustomerTests(page);
+    await runCustomerTests(page, test);
 });
