@@ -18,7 +18,7 @@ export default defineConfig({
   use: {
     actionTimeout: 15000, 
     navigationTimeout: 30000,
-    baseURL: config ? config.baseUrl : 'https://beta-portal.example.com', 
+    baseURL: config ? config.baseUrl : 'https://betaaccount.retailcloud.com/rc-console/console/login', 
     headless: false, 
     viewport: { width: 1280, height: 720 },
   },
