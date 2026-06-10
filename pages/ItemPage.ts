@@ -11,7 +11,6 @@ export class ItemPage {
     readonly continueBtn!: Locator;
     readonly successMessage!: Locator;
     readonly searchInput!: Locator;
-    //readonly firstRowCell!: Locator;
 
     constructor(public page: Page) {
         this.itemPageTitle = page.locator("//h2[@class='heading-card']");
@@ -78,7 +77,13 @@ async searchAndVerifyItem(id: string) {
         console.log(`Searching for Item ID: ${id}`);
         // 1. Enter the ID into the search box
         await this.searchInput.fill(id);
-        await this.page.keyboard.press('Enter');
+        await this.page.waitForTimeout(500);
+        await this.page.keyboard.press('Enter'); //press enter to search
+        await this.page.waitForLoadState('networkidle');
+        const gridCellLocator = this.page.locator('#reportGrid span').filter({ hasText: id }).first();
+        await expect(gridCellLocator).toBeVisible({ timeout: 10000 });
+        console.log(`Successfully verified: Item ID ${id} is present inside #reportGrid.`);
+
 
     }
 

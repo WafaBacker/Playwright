@@ -3,6 +3,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { runItemTests } from './item.helper';
 import { runCustomerTests } from './customer.helper';
 import * as envData from '../env-config.json';
+import { runAttributeTests } from './attribute.helper';
 
 const env = (process.env.TEST_ENV || 'beta') as keyof typeof envData;
 const config = envData[env];
@@ -17,11 +18,18 @@ test('Full Business Journey', async ({ page }) => {
     });
 
     // Executes Item steps in the SAME browser window
-    await runItemTests(page, test);
+    //await runItemTests(page, test);
+
+    // Buffer for UI stability
+    //await page.waitForTimeout(3000);
+
+    // Executes Customer steps in the SAME browser window
+   // await runCustomerTests(page, test);
 
     // Buffer for UI stability
     await page.waitForTimeout(3000);
 
     // Executes Customer steps in the SAME browser window
-    await runCustomerTests(page, test);
+    await runAttributeTests(page, test);
+
 });

@@ -7,6 +7,7 @@ export class NavComponent {
   readonly itemIcon!:Locator;
   readonly CrmIcon!: Locator;
   readonly customerIcon!: Locator;
+  readonly attributeIcon!: Locator;
 
 
   constructor(public page: Page) {
@@ -15,6 +16,7 @@ export class NavComponent {
     this.itemIcon = page.getByText('Items', { exact: true }).first();
     this.CrmIcon = page.locator('div').filter({ hasText: /^CRM$/ }).first()
     this.customerIcon = page.getByText('Customers');
+    this.attributeIcon = page.getByText('Attributes');
   }
 
 
@@ -35,8 +37,12 @@ export class NavComponent {
     await this.CrmIcon.click()
     await this.customerIcon.waitFor({ state: 'visible' });
     await this.customerIcon.click()
+  }
 
-
+  async goToAttribute() {
+    await this.goToSideBar()
+    await this.catalogIcon.click(); //Click 'Catalog Icon' in side bar
+    await this.attributeIcon.click();
   }
  
 }
